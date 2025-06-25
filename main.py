@@ -4,10 +4,10 @@ from enigma.enigma_machine import EnigmaMachine
 from utils.rotor_utils import load_or_generate_rotor
 
 def get_classic_rotors():
-    return [
-        Rotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ"),
-        Rotor("AJDKSIRUXBLHWTMCQGZNPYFVOE"),
-        Rotor("BDFHJLCPRTXVZNYEIWGAKMUSQO")
+    return [       
+        Rotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ", notch='Q'),  # Rotor I
+        Rotor("AJDKSIRUXBLHWTMCQGZNPYFVOE", notch='E'),  # Rotor II
+        Rotor("BDFHJLCPRTXVZNYEIWGAKMUSQO", notch='V')   # Rotor III
     ]
 
 def get_random_rotors():

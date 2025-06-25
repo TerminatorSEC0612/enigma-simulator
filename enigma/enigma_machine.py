@@ -32,4 +32,28 @@ class EnigmaMachine:
         return c
 
     def encrypt_message(self, message):
-        return ''.join(self.encrypt_char(c) for c in message)
+        ciphertext = ''
+        for char in message:
+            if not char.isalpha():
+                ciphertext += char
+                continue
+            char = char.upper()
+
+            # --- Rotor stepping logic ---
+            if self.rotors[1].at_notch():
+                self.rotors[0].rotate()
+                self.rotors[1].rotate()  # double stepping
+            elif self.rotors[2].at_notch():
+                self.rotors[1].rotate()
+
+            self.rotors[2].rotate()
+
+            # --- Encryption process ---
+            for rotor in reversed(self.rotors):
+                char = rotor.encode_forward(char)
+            char = self.plugboard.swap(char)
+            for rotor in self.rotors:
+                char = rotor.encode_backward(char)
+
+            ciphertext += char
+        return ciphertext
