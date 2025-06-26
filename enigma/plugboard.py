@@ -1,13 +1,14 @@
 class Plugboard:
-    def init(self, wiring_pairs=None):
+    def __init__(self, wiring_pairs=None):
+        self.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         self.wiring = self._generate_wiring(wiring_pairs or [])
 
     def _generate_wiring(self, pairs):
-        wiring = {chr(i): chr(i) for i in range(ord('A'), ord('Z')+1)}
+        wiring = dict(zip(self.alphabet, self.alphabet))
         for a, b in pairs:
             wiring[a] = b
             wiring[b] = a
         return wiring
 
-    def swap(self, c):
+    def encode(self, c: str) -> str:
         return self.wiring.get(c, c)

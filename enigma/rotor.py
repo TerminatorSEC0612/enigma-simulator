@@ -1,28 +1,22 @@
+from .rotor_utils import invert_wiring
+
 class Rotor:
-    def init(self, wiring, notch='Q', position=0):
+    def __init__(self, wiring: str, notch: str = 'Z', position: int = 0):
         self.wiring = wiring
-        self.inverse_wiring = self._invert_wiring(wiring)
-        self.notch = notch  # letter where the next rotor should rotate
-        self.position = position  # initial position (0–25)
-    
-    def _invert_wiring(self, wiring):
-        result = [''] * 26
-        for i, c in enumerate(wiring):
-            result[ord(c) - ord('A')] = chr(i + ord('A'))
-        return ''.join(result)
+        self.inverse_wiring = invert_wiring(wiring)
+        self.notch = notch
+        self.position = position
+        self.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-    def rotate(self):
+    def encode_forward(self, c: str) -> str:
+        idx = (self.alphabet.index(c) + self.position) % 26
+        return self.wiring[idx]
+
+    def encode_backward(self, c: str) -> str:
+        letter = self.alphabet[(self.inverse_wiring.index(c) - self.position) % 26]
+        return letter
+
+    def step(self) -> bool:
         self.position = (self.position + 1) % 26
+        return self.alphabet[self.position] == self.notch
 
-    def at_notch(self):
-        return chr((self.position + ord('A')) % 26) == self.notch
-
-    def encode_forward(self, c):
-        index = (ord(c) - ord('A') + self.position) % 26
-        subst = self.wiring[index]
-        return chr((ord(subst) - ord('A') - self.position + 26) % 26 + ord('A'))
-
-    def encode_backward(self, c):
-        index = (ord(c) - ord('A') + self.position) % 26
-        subst = self.inverse_wiring[index]
-        return chr((ord(subst) - ord('A') - self.position + 26) % 26 + ord('A'))
