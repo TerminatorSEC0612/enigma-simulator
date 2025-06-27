@@ -4,6 +4,7 @@ import string
 from .reflector import Reflector
 from .plugboard import Plugboard
 from .enigma_machine import EnigmaMachine
+from .rotor_storage import load_rotors, save_rotors
 
 def get_classic_rotors():
     return [
@@ -35,17 +36,33 @@ def main():
     if mode == "1":
         rotors = get_classic_rotors()
     elif mode == "2":
-        rotors = get_random_rotors()
+        rotors = load_rotors()
+        if rotors is None:
+            rotors = get_random_rotors()
+            save_rotors(rotors)
+            print("[INFO] New random rotors generated and saved.")
+        else:
+            print("[INFO] Loaded saved random rotors.")
+
     else:
         print("Envalid mode selected.")
         return
+    
+    positions = input("Enter starting positions (e.g. ABC): ").upper()
+    if len(positions) != 3 or not positions.isalpha():
+        print("Invalid input. Defaulting to AAA.")
+        positions = "AAA"
+
+    for rotor, pos_char in zip(rotors, positions):
+        rotor.set_position(ord(pos_char) - ord("A"))
+
     
     reflector = get_classic_reflector()
     plugboard = Plugboard([("A", "M"), ("G", "L"), ("E", "T")])
 
     machine = EnigmaMachine(rotors, reflector, plugboard)
 
-    message = input("Please Enter a message")
+    message = input("Please Enter a message: ")
     ciphertext = machine.encrypt_message(message)
     print(f"Plaintext:  {message}")
     print(f"Ciphertext: {ciphertext}")
